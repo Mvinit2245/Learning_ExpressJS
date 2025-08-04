@@ -4,8 +4,8 @@ exports.adminMiddleware =async (req, res, next) => {
    const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; 
     if(!token){
-        res.json({message: 'User not authenticated'})
-        return
+      return  res.json({message: 'User not authenticated'})
+        
     }
 
     const decodeToken = await verifyToken(token)

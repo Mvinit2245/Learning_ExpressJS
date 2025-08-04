@@ -5,22 +5,31 @@ const { generateToken } = require("./jwt.js");
 exports.createUser = async (req, res) => {
     try {
         const userData = req.body;
+
         if (!userData.name || !userData.age || !userData.email || !userData.password || !userData.role) {
-            res.status(400).json({ message: "Required fields are missing" })
-            return
+            return res.status(400).json({ message: "Required fields are missing" });
         }
-        const isUserExist = await userModel.findOne({email: userData.email})
-        if(isUserExist){
-            res.json({message: "User already exist"});
+
+        const isUserExist = await userModel.findOne({ email: userData.email });
+        if (isUserExist) {
+            return res.status(409).json({ message: "User already exists" });
         }
-        const hashedPassword = await generateHash(userData.password)
-        await userModel.collection.insertOne({...userData, password: hashedPassword});
-        return res.status(201).json({ message: "User added successfully" })
+
+        const hashedPassword = await generateHash(userData.password);
+
+        await userModel.collection.insertOne({
+            ...userData,
+            password: hashedPassword,
+        });
+
+        return res.status(201).json({ message: "User added successfully" });
+
     } catch (err) {
-        console.log(err)
-        return res.json({ message: err })
+        console.log("Error in createUser:", err);
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
+
  
 exports.listUsers = async (req, res) => {
     try {

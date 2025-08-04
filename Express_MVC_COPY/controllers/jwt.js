@@ -8,7 +8,11 @@ exports.generateToken = async (email, role) => {
 }
 
 exports.verifyToken = async (token) => {
-    const result = jwt.verify(token, process.env.JWT_SECRET)
-    return result;
-    
-}
+    try {
+        const result = jwt.verify(token, process.env.JWT_SECRET);
+        return result;
+    } catch (err) {
+        console.error("JWT verification failed:", err.message);
+        return null;
+    }
+};
